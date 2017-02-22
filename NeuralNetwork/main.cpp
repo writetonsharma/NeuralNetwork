@@ -5,14 +5,16 @@
 #include "CFile.h"
 #include "miscdef.h"
 #include "partition.h"
+#include "CConfig.h"
 
 
 
 #define OUTPUT_LAYER_NODE	2
-#define HIDDEN_LAYER_NODE	20
-#define LEARNING_RATE		0.8
+#define HIDDEN_LAYER_NODE	100
+#define LEARNING_RATE		0.9
 
 extern std::map<int, double>	maxValMap;
+extern std::map<int, double>	minValMap;
 
 //#define INPUT_NODE_COUNT
 
@@ -37,8 +39,15 @@ void scaleData(const std::vector<std::string>& lineBuffer, std::vector<std::vect
 				 // insert first column without change, its the target value
 				 if (!first_column)
 				 {
-					 double div = maxValMap[col];
-					 val = ((val / div) * 0.99) + 0.01;
+					 double mx = maxValMap[col];
+					 double mn = minValMap[col];
+					 //val = ((val / div) * 0.99) + 0.01;
+					 val = (val - mn) / (mx - mn);
+					 if ((val == mn) || (mx == mn))
+					 {
+						 val = 0.5;
+					 }
+					 ;
 				 }
 				 else
 				 {
@@ -105,6 +114,8 @@ void ANN()
 	std::vector<std::vector<double> >	slicedData;
 	scaleData(lineBuffer, slicedData);
 	lineBuffer.clear();
+
+
 
 	double** targetMatrix = CMatrix::allocateMatrix(OUTPUT_LAYER_NODE, 1);
 	double** inputMatrix = CMatrix::allocateMatrix(slicedData[0].size() - 1, 1);
@@ -191,7 +202,7 @@ void ANN()
 		double val = 0;
 		u_int index = 0;
 		max(targetMatrix, OUTPUT_LAYER_NODE, 1, val, index);
-		//CMatrix::printMatrix(targetMatrix, "targetMatrix", NODE_COUNT, 1, "neuralnetwork.log", true);
+		//CMatrix::printMatrix(targetMatrix, "targetMatrix", OUTPUT_LAYER_NODE, 1, "neuralnetwork.log", true);
 
 		std::stringstream str;
 		str << "target: " << targetVal << "\n";
@@ -222,19 +233,17 @@ void ANN()
 
 void main()
 {
+	std::string iniFile = "nnConfig.ini";
+	CConfig::getInstance(iniFile);
+
 	remove("neuralnetwork.log");
 
 	preprocess();
 
-	partition(80);
+	partition(90);
 
 	ANN();
 
 
 	return;
-
-	
-
-
-
 }

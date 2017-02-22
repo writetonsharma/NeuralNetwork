@@ -45,6 +45,8 @@ public:
 	void writeFile(std::vector<double>& row);
 	void skipRows(u_int count);
 
+	bool readLine(std::string& line);
+
 };
 
 #endif

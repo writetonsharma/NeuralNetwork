@@ -159,3 +159,4 @@ double lowestLow(std::vector<std::vector<double> >& slicedData,
 	size_t curr_index,
 	size_t col_index,
 	int time_period);
+

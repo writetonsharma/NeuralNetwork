@@ -31,7 +31,7 @@ CNeuralNetwork::CNeuralNetwork(u_int inputNodes, u_int hiddenNodes, u_int output
 		<< "Hidden nodes: " << m_hiddenNodes << std::endl
 		<< "Output nodes: " << m_outputNodes << std::endl
 		<< "Learning rate: " << m_learningRate << std::endl;
-	//CMatrix::print(strstr.str());
+	CMatrix::print(strstr.str());
 
 	if (m_inputNodes > m_hiddenNodes)
 	{

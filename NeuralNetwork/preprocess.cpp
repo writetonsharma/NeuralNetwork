@@ -22,6 +22,7 @@ double prevAvgGain = 0.0;
 double prevAvgLoss = 0.0;
 
 std::map<int, double>	maxValMap;
+std::map<int, double>	minValMap;
 size_t recordCount = 0;
 
 
@@ -151,6 +152,14 @@ void processIndicators(const std::vector<std::string>& lineBuffer, std::vector<s
 		std::vector<double> temp;
 		double hh = max(slicedData, i, PREVIOUS_DAYS, slicedData.size() - 1);
 		maxValMap.insert(std::pair<int, double>(i+1, hh));
+	}
+
+	minValMap.insert(std::pair<int, double>(0, 0));
+	for (size_t i = 0; i <= TWO_HD_LOWEST_LOW_INDEX; i++)
+	{
+		std::vector<double> temp;
+		double ll = min(slicedData, i, PREVIOUS_DAYS, slicedData.size() - 1);
+		minValMap.insert(std::pair<int, double>(i + 1, ll));
 	}
 
 }

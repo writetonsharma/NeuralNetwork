@@ -110,6 +110,17 @@ void CFile::readFile(std::vector<std::string>& lineBuffer)
 	return;
 }
 
+bool CFile::readLine(std::string& line)
+{
+	getline(*m_fs, line);
+	if (line.length() == 0 && m_fs->eof())
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void CFile::writeFile(std::vector<std::vector<double> >& indicators)
 {
 	if (!m_fileOpen)

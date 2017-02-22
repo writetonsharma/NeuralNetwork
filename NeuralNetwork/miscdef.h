@@ -15,7 +15,7 @@
 
 typedef unsigned int u_int;
 #define PREVIOUS_DAYS		200
-#define STOCK_DATA_FILE						"../Data/Stock/fis.csv"
+#define STOCK_DATA_FILE						"../Data/Stock/fis_05.csv"
 #define STOCK_DATA_FILE_WITH_INDICATORS		"../Data/Stock/fis_indicators.csv"
 #define STOCK_DATA_FILE_TRAIN				"../Data/Stock/fis_indicators_train.csv"
 #define STOCK_DATA_FILE_TEST				"../Data/Stock/fis_indicators_test.csv"
