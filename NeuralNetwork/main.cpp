@@ -6,12 +6,9 @@
 #include "miscdef.h"
 #include "partition.h"
 #include "CConfig.h"
+#include "IniSettings.h"
 
 
-
-#define OUTPUT_LAYER_NODE	2
-#define HIDDEN_LAYER_NODE	100
-#define LEARNING_RATE		0.9
 
 extern std::map<int, double>	maxValMap;
 extern std::map<int, double>	minValMap;
@@ -101,7 +98,7 @@ void ANN()
 	std::vector<std::string> lineBuffer;
 	try
 	{
-		CFile cfile(STOCK_DATA_FILE_TRAIN, OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(TrainingFile), OpenType::CF_READ);
 		cfile.readFile(lineBuffer);
 		cfile.close();
 	}
@@ -117,12 +114,15 @@ void ANN()
 
 
 
-	double** targetMatrix = CMatrix::allocateMatrix(OUTPUT_LAYER_NODE, 1);
+	double** targetMatrix = CMatrix::allocateMatrix(atoi(CConfig::getInstance()->getValue(OutputLayerNodeCount).c_str()), 1);
 	double** inputMatrix = CMatrix::allocateMatrix(slicedData[0].size() - 1, 1);
 
 
 
-	CNeuralNetwork* ann = new CNeuralNetwork(slicedData[0].size() - 1, HIDDEN_LAYER_NODE, OUTPUT_LAYER_NODE, LEARNING_RATE);
+	CNeuralNetwork* ann = new CNeuralNetwork(slicedData[0].size() - 1, 
+		atoi(CConfig::getInstance()->getValue(HiddenLayerNodeCount).c_str()),
+		atoi(CConfig::getInstance()->getValue(OutputLayerNodeCount).c_str()),
+		atof(CConfig::getInstance()->getValue(LearningRate).c_str()));
 	size_t size = slicedData.size();
 
 
@@ -130,6 +130,7 @@ void ANN()
 	CMatrix::print("\n###### Training run ######\n");
 
 	// for all the inputs
+	size_t outputLayer = atoi(CConfig::getInstance()->getValue(OutputLayerNodeCount).c_str());
 	for (size_t i = 0; i < size; i++)
 	{
 		std::stringstream str;
@@ -137,13 +138,14 @@ void ANN()
 		CMatrix::print(str.str());
 
 		// create target matrix
-		for (size_t j = 0; j < OUTPUT_LAYER_NODE; j++)
+		
+		for (size_t j = 0; j < outputLayer; j++)
 		{
 			targetMatrix[j][0] = 0.01;
 		}
 		int targetVal = (int)slicedData[i][0];
 		targetMatrix[targetVal][0] = 0.99;		// set the correct index for target
-												//CMatrix::printMatrix(targetMatrix, "targetMatrix", NODE_COUNT, 1, "neuralnetwork.log", true);
+		//CMatrix::printMatrix(targetMatrix, "targetMatrix", NODE_COUNT, 1, "neuralnetwork.log", true);
 
 												// create input matrix, leave first column
 		size_t size_inner = slicedData[i].size() - 1;
@@ -151,7 +153,7 @@ void ANN()
 		{
 			inputMatrix[j][0] = slicedData[i][j + 1];
 		}
-		//CMatrix::printMatrix(inputMatrix, "inputMatrix", slicedData[0].size() - 1, 1, "neuralnetwork.log", true);
+		CMatrix::printMatrix(inputMatrix, "inputMatrix", slicedData[0].size() - 1, 1, "neuralnetwork.log", true);
 
 		ann->train(inputMatrix, targetMatrix);
 	}
@@ -161,7 +163,7 @@ void ANN()
 
 	try
 	{
-		CFile cfile(STOCK_DATA_FILE_TEST, OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(TestFile), OpenType::CF_READ);
 		cfile.readFile(lineBuffer);
 		cfile.close();
 	}
@@ -175,9 +177,9 @@ void ANN()
 	lineBuffer.clear();
 
 	CMatrix::freeMatrix(inputMatrix, slicedData[0].size() - 1, 1);
-	CMatrix::freeMatrix(targetMatrix, OUTPUT_LAYER_NODE, 1);
+	CMatrix::freeMatrix(targetMatrix, outputLayer, 1);
 	inputMatrix = CMatrix::allocateMatrix(slicedData[0].size() - 1, 1);
-	targetMatrix = CMatrix::allocateMatrix(OUTPUT_LAYER_NODE, 1);
+	targetMatrix = CMatrix::allocateMatrix(outputLayer, 1);
 
 	size = slicedData.size();
 
@@ -201,8 +203,9 @@ void ANN()
 		ann->query(inputMatrix, targetMatrix);
 		double val = 0;
 		u_int index = 0;
-		max(targetMatrix, OUTPUT_LAYER_NODE, 1, val, index);
-		//CMatrix::printMatrix(targetMatrix, "targetMatrix", OUTPUT_LAYER_NODE, 1, "neuralnetwork.log", true);
+		max(targetMatrix, outputLayer, 1, val, index);
+		CMatrix::printMatrix(targetMatrix, "targetMatrix", 
+			atoi(CConfig::getInstance()->getValue(OutputLayerNodeCount).c_str()), 1, "neuralnetwork.log", true);
 
 		std::stringstream str;
 		str << "target: " << targetVal << "\n";
@@ -227,23 +230,29 @@ void ANN()
 	CMatrix::print(str.str());
 
 	CMatrix::freeMatrix(inputMatrix, slicedData[0].size() - 1, 1);
-	CMatrix::freeMatrix(targetMatrix, OUTPUT_LAYER_NODE, 1);
+	CMatrix::freeMatrix(targetMatrix, outputLayer, 1);
 }
 
 
-void main()
+int main(int argc, char** argv)
 {
-	std::string iniFile = "nnConfig.ini";
+	if (argc < 2)
+	{
+		std::cout << "Usage: " << argv[0] << " <ini_file_path>" << std::endl;
+		return false;
+	}
+
+	std::string iniFile = argv[1];
 	CConfig::getInstance(iniFile);
 
 	remove("neuralnetwork.log");
 
 	preprocess();
 
-	partition(90);
+	partition(80);
 
 	ANN();
 
 
-	return;
+	return true;
 }

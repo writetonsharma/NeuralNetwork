@@ -1,9 +1,10 @@
 
 #include "CConfig.h"
+#include "IniSettings.h"
 
 CConfig* CConfig::m_instance;
 
- CConfig* CConfig::getInstance(const std::string& filePath)
+CConfig* CConfig::getInstance(const std::string& filePath)
 {
 	if (m_instance == 0)
 	{
@@ -31,6 +32,11 @@ CConfig::CConfig(const std::string& filePath)
 	m_cfile = new CFile(filePath, OpenType::CF_READ);
 
 	readConfig();
+
+	m_closeIndex = atoi(getValue(CLOSE_INDEX).c_str());
+	m_highIndex = atoi(getValue(HIGH_INDEX).c_str());
+	m_lowIndex = atoi(getValue(LOW_INDEX).c_str());
+
 }
 
 void CConfig::readConfig()
@@ -86,4 +92,19 @@ bool CConfig::getSettingValue(const std::string& line, std::string& setting, std
 std::string CConfig::getValue(const std::string& setting)
 {
 	return m_settingsPair[setting];
+}
+
+size_t CConfig::getLowIndex()
+{
+	return m_lowIndex;
+}
+
+size_t CConfig::getHighIndex()
+{
+	return m_highIndex;
+}
+
+size_t CConfig::getCloseIndex()
+{
+	return m_closeIndex;
 }

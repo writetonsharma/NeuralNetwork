@@ -28,12 +28,18 @@ private:
 
 	std::map<std::string, std::string>	m_settingsPair;
 
+	size_t m_lowIndex;
+	size_t m_highIndex;
+	size_t m_closeIndex;
 
 public:
 
 	static CConfig* getInstance(const std::string& filePath);
 	static CConfig* getInstance();
 	std::string getValue(const std::string& setting);
+	size_t getLowIndex();
+	size_t getHighIndex();
+	size_t getCloseIndex();
 };
 #endif		/*	__CCONFIG_H__	*/
 

@@ -2,6 +2,8 @@
 
 #include "partition.h"
 #include "CFile.h"
+#include "CConfig.h"
+#include "IniSettings.h"
 
 
 
@@ -16,7 +18,7 @@ bool partition(double trainPercent)
 	std::vector<std::string> lineBuffer;
 	try
 	{
-		CFile cfile(STOCK_DATA_FILE_WITH_INDICATORS, OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), OpenType::CF_READ);
 		cfile.skipRows(1);
 		cfile.readFile(lineBuffer);
 		cfile.close();
@@ -28,18 +30,18 @@ bool partition(double trainPercent)
 
 	size_t lineCount = (size_t)(trainPercent * (lineBuffer.size()))/100;
 
-	remove(STOCK_DATA_FILE_TRAIN);
-	remove(STOCK_DATA_FILE_TEST);
+	remove(CConfig::getInstance()->getValue(TrainingFile).c_str());
+	remove(CConfig::getInstance()->getValue(TestFile).c_str());
 
 	// training data
-	if (!writeData(lineBuffer, STOCK_DATA_FILE_TRAIN, 0, lineCount))
+	if (!writeData(lineBuffer, CConfig::getInstance()->getValue(TrainingFile), 0, lineCount))
 	{
 		CMatrix::print("Training file creation failed.\n");
 		return false;
 	}
 
 	// test data
-	if (!writeData(lineBuffer, STOCK_DATA_FILE_TEST, lineCount, lineBuffer.size()))
+	if (!writeData(lineBuffer, CConfig::getInstance()->getValue(TestFile), lineCount, lineBuffer.size()))
 	{
 		CMatrix::print("Test file creation failed.\n");
 		return false;

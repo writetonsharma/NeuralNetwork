@@ -3,6 +3,8 @@
 #include "CNeuralNetwork.h"
 #include "miscdef.h"
 #include "CFile.h"
+#include "CConfig.h"
+#include "IniSettings.h"
 
 bool	dateColumn[] = { 1,0,0,0,0,0 };
 std::map<std::string, std::string> monthIndex;
@@ -34,7 +36,7 @@ void readFile(std::vector<std::string>& lineBuffer)
 	
 	try
 	{
-		CFile cfile(STOCK_DATA_FILE, OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(InputFile), OpenType::CF_READ);
 		cfile.skipRows(1);
 		cfile.readFile(lineBuffer);
 		cfile.close();
@@ -48,7 +50,7 @@ void readFile(std::vector<std::string>& lineBuffer)
 void preprocess(void)
 {
 
-	remove(STOCK_DATA_FILE_WITH_INDICATORS);
+	remove(CConfig::getInstance()->getValue(IndicatorsFile).c_str());
 	fillMonthIndex();
 
 	std::vector<std::string> lineBuffer;
@@ -64,16 +66,17 @@ void preprocess(void)
 	//stream out indicators
 	try
 	{
-		CFile cfile(STOCK_DATA_FILE_WITH_INDICATORS, OpenType::CF_WRITE);
+		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), OpenType::CF_WRITE);
 		cfile.writeFile(header);
 		std::string str = "\n";
 		cfile.writeFile(str);
-		for (size_t i = PREVIOUS_DAYS; i < (indicators.size() - 1); i++)
+		for (size_t i = atoi(CConfig::getInstance()->getValue(PreviousDays).c_str()); i < (indicators.size() - 1); i++)
 		{
 			std::vector<double>& row = indicators[i];
 			// first column will be result
 			// don't write last result, there is no result for today (we do not know tomorrow's value)
-			if (indicators[i][CLOSE_INDEX] <= indicators[i + 1][CLOSE_INDEX])
+			if (indicators[i][atoi(CConfig::getInstance()->getValue(CLOSE_INDEX).c_str())] 
+				<= indicators[i + 1][atoi(CConfig::getInstance()->getValue(CLOSE_INDEX).c_str())])
 			{
 				// going up
 				str = "1,";
@@ -104,7 +107,7 @@ void processIndicators(const std::vector<std::string>& lineBuffer, std::vector<s
 {
 	size_t len = lineBuffer.size();
 
-	assert(lineBuffer.size() > (PREVIOUS_DAYS));
+	assert(lineBuffer.size() > (size_t)(atoi(CConfig::getInstance()->getValue(PreviousDays).c_str())));
 
 	// skip first row and previous days.
 	for (size_t i = 0; i < len; i++)
@@ -135,7 +138,7 @@ void processIndicators(const std::vector<std::string>& lineBuffer, std::vector<s
 		double val = dateColumn[col++] ? toNumericDate(t_str) : atof(t_str.c_str());
 		temp.push_back(val);
 
-		if (i >= PREVIOUS_DAYS)
+		if (i >= (size_t)atoi(CConfig::getInstance()->getValue(PreviousDays).c_str()))
 		{
 			// process rest of the indicators
 			processIndicatorsForRow(slicedData, temp, i);
@@ -147,18 +150,19 @@ void processIndicators(const std::vector<std::string>& lineBuffer, std::vector<s
 
 	// get the max for each column
 	maxValMap.insert(std::pair<int, double>(0, 1));
-	for (size_t i = 0; i <= TWO_HD_LOWEST_LOW_INDEX; i++)
+	size_t two_hd_ll = (size_t)atoi(CConfig::getInstance()->getValue(TWO_HD_LOWEST_LOW_INDEX).c_str());
+	for (size_t i = 0; i <= two_hd_ll; i++)
 	{
 		std::vector<double> temp;
-		double hh = max(slicedData, i, PREVIOUS_DAYS, slicedData.size() - 1);
+		double hh = max(slicedData, i, atoi(CConfig::getInstance()->getValue(PreviousDays).c_str()), slicedData.size() - 1);
 		maxValMap.insert(std::pair<int, double>(i+1, hh));
 	}
 
 	minValMap.insert(std::pair<int, double>(0, 0));
-	for (size_t i = 0; i <= TWO_HD_LOWEST_LOW_INDEX; i++)
+	for (size_t i = 0; i <= two_hd_ll; i++)
 	{
 		std::vector<double> temp;
-		double ll = min(slicedData, i, PREVIOUS_DAYS, slicedData.size() - 1);
+		double ll = min(slicedData, i, atoi(CConfig::getInstance()->getValue(PreviousDays).c_str()), slicedData.size() - 1);
 		minValMap.insert(std::pair<int, double>(i + 1, ll));
 	}
 
@@ -204,29 +208,36 @@ void processIndicatorsForRow(std::vector<std::vector<double> >& slicedData, std:
 	temp.push_back(plp(slicedData, index));
 	temp.push_back(pop(slicedData, index));
 
+
 	// simple moving averages
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 5));
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 6));
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 10));
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 20));
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 50));
-	temp.push_back(simpleMovingAverage(slicedData, temp, index, CLOSE_INDEX, 200));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 5));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 6));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 10));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 50));
+	temp.push_back(simpleMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 200));
 
 	// exponential moving averages
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, FIVE_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 5));
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, SIX_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 6));
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, TEN_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 10));
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, TWENTY_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 20));
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, FIFTY_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 50));
-	temp.push_back(exponentialMovingAverage(slicedData, temp, index, TWO_H_DAY_EMA_CLOSING_INDEX, CLOSE_INDEX, 200));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(FIVE_DAY_EMA_CLOSING_INDEX).c_str()),	CConfig::getInstance()->getCloseIndex(), 5));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(SIX_DAY_EMA_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 6));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(TEN_DAY_EMA_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 10));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(TWENTY_DAY_EMA_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 20));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(FIFTY_DAY_EMA_CLOSING_INDEX).c_str()),CConfig::getInstance()->getCloseIndex(), 50));
+	temp.push_back(exponentialMovingAverage(slicedData, temp, index, 
+		atoi(CConfig::getInstance()->getValue(TWO_H_DAY_EMA_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 200));
 
 	// Triangular Moving Average
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 5));
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 6));
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 10));
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 20));
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 50));
-	temp.push_back(triangularMovingAverage(slicedData, temp, index, CLOSE_INDEX, 200));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 5));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 6));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 10));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 50));
+	temp.push_back(triangularMovingAverage(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 200));
 
 	// ADL
 	temp.push_back(accumulationDistributionLine(slicedData, temp, index));
@@ -237,20 +248,20 @@ void processIndicatorsForRow(std::vector<std::vector<double> >& slicedData, std:
 	// 9 period EMA on MACD ?? need to calculate.
 
 	// accelerated close price
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 5));
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 6));
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 10));
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 20));
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 50));
-	temp.push_back(accelerationOscillator(slicedData, temp, index, CLOSE_INDEX, 200));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 5));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 6));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 10));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 50));
+	temp.push_back(accelerationOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 200));
 
 	// momentum close price
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 5));
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 6));
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 10));
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 20));
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 50));
-	temp.push_back(momentumOscillator(slicedData, temp, index, CLOSE_INDEX, 200));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 5));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 6));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 10));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 50));
+	temp.push_back(momentumOscillator(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 200));
 
 	// chaikinvolatility
 	temp.push_back(chaikinvolatility(slicedData, temp, index));
@@ -271,57 +282,57 @@ void processIndicatorsForRow(std::vector<std::vector<double> >& slicedData, std:
 	temp.push_back(williamsRPercent(slicedData, temp, index, 14));
 	
 	// RSI
-	temp.push_back(relativeStrengthIndex(slicedData, temp, index, CLOSE_INDEX, 14));
+	temp.push_back(relativeStrengthIndex(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 14));
 	
 	// Bollinger Middle Band
-	temp.push_back(bollingerMiddleBand(slicedData, temp, index, CLOSE_INDEX, 20));
+	temp.push_back(bollingerMiddleBand(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
 
 	// Bollinger Higher Band
-	temp.push_back(bollingerHigherBand(slicedData, temp, index, CLOSE_INDEX, 20));
+	temp.push_back(bollingerHigherBand(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
 
 	// Bollinger Lower Band
-	temp.push_back(bollingerLowerBand(slicedData, temp, index, CLOSE_INDEX, 20));
+	temp.push_back(bollingerLowerBand(slicedData, temp, index, CConfig::getInstance()->getCloseIndex(), 20));
 
 	// highest high
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 5));
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 6));
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 10));
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 20));
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 50));
-	temp.push_back(highestHigh(slicedData, temp, index, HIGH_INDEX, 200));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 5));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 6));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 10));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 20));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 50));
+	temp.push_back(highestHigh(slicedData, temp, index, CConfig::getInstance()->getHighIndex(), 200));
 
 	// lowest low
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 5));
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 6));
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 10));
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 20));
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 50));
-	temp.push_back(lowestLow(slicedData, temp, index, LOW_INDEX, 200));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 5));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 6));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 10));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 20));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 50));
+	temp.push_back(lowestLow(slicedData, temp, index, CConfig::getInstance()->getLowIndex(), 200));
 }
 
 double tcpMinuspcp(std::vector<std::vector<double> >& slicedData, std::vector<double>& temp, size_t index)
 {
-	return temp[CLOSE_INDEX] - slicedData[index - 1][CLOSE_INDEX];
+	return temp[CConfig::getInstance()->getCloseIndex()] - slicedData[index - 1][CConfig::getInstance()->getCloseIndex()];
 }
 
 double pcp(std::vector<std::vector<double> >& slicedData, size_t index)
 {
-	return slicedData[index - 1][CLOSE_INDEX];
+	return slicedData[index - 1][CConfig::getInstance()->getCloseIndex()];
 }
 
 double php(std::vector<std::vector<double> >& slicedData, size_t index)
 {
-	return slicedData[index - 1][HIGH_INDEX];
+	return slicedData[index - 1][CConfig::getInstance()->getHighIndex()];
 }
 
 double plp(std::vector<std::vector<double> >& slicedData, size_t index)
 {
-	return slicedData[index - 1][LOW_INDEX];
+	return slicedData[index - 1][CConfig::getInstance()->getLowIndex()];
 }
 
 double pop(std::vector<std::vector<double> >& slicedData, size_t index)
 {
-	return slicedData[index - 1][LOW_INDEX];
+	return slicedData[index - 1][CConfig::getInstance()->getLowIndex()];
 }
 
 double simpleMovingAverage(std::vector<std::vector<double> >& slicedData,
@@ -363,7 +374,7 @@ double exponentialMovingAverage(std::vector<std::vector<double> >& slicedData,
 	{
 		// weight * (close_price - previous_EMA) + previous_EMA
 		double weight = (2.0 / (time_period + 1.0));
-		ema = (weight *(temp[CLOSE_INDEX] - slicedData[curr_index - 1][col_index])) + slicedData[curr_index - 1][col_index];
+		ema = (weight *(temp[CConfig::getInstance()->getCloseIndex()] - slicedData[curr_index - 1][col_index])) + slicedData[curr_index - 1][col_index];
 	}
 
 	return ema;
@@ -400,19 +411,22 @@ double accumulationDistributionLine(std::vector<std::vector<double> >& slicedDat
 	double adl = 0.0;
 
 	// step-1
-	double MFM = ((temp[CLOSE_INDEX] - temp[LOW_INDEX]) - (temp[HIGH_INDEX] - temp[CLOSE_INDEX])) / (temp[HIGH_INDEX] - temp[LOW_INDEX]);
-	double MFV = MFM * temp[VOL_INDEX];
+	double MFM = ((temp[CConfig::getInstance()->getCloseIndex()] 
+		- temp[CConfig::getInstance()->getLowIndex()]) - (temp[CConfig::getInstance()->getHighIndex()]
+		- temp[CConfig::getInstance()->getCloseIndex()])) / (temp[CConfig::getInstance()->getHighIndex()] 
+		- temp[CConfig::getInstance()->getLowIndex()]);
+	double MFV = MFM * temp[atoi(CConfig::getInstance()->getValue(VOL_INDEX).c_str())];
 
 	// first ADL will be equal to MFV
 	// if ADL are not found for previous day, its the first time
-	if (slicedData[curr_index - 1].size() < ADL_CLOSING_INDEX)
+	if (slicedData[curr_index - 1].size() < (size_t)atoi(CConfig::getInstance()->getValue(ADL_CLOSING_INDEX).c_str()))
 	{
 		adl = MFV;		// ADL = MFV
 	}
 	else
 	{
 		// MFV + previous ADL
-		adl = MFV + slicedData[curr_index - 1][ADL_CLOSING_INDEX];
+		adl = MFV + slicedData[curr_index - 1][atoi(CConfig::getInstance()->getValue(ADL_CLOSING_INDEX).c_str())];
 	}
 
 	return adl;
@@ -424,8 +438,10 @@ double movingAverageConvergenceDivergence(std::vector<std::vector<double> >& sli
 	size_t curr_index)
 {
 	//12D EMA - 26D EMA
-	return exponentialMovingAverage(slicedData, temp, curr_index, MACD_CLOSING_INDEX, CLOSE_INDEX, 12) -
-		exponentialMovingAverage(slicedData, temp, curr_index, MACD_CLOSING_INDEX, CLOSE_INDEX, 26);
+	return exponentialMovingAverage(slicedData, temp, curr_index, 
+		atoi(CConfig::getInstance()->getValue(MACD_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 12) -
+		exponentialMovingAverage(slicedData, temp, curr_index, 
+			atoi(CConfig::getInstance()->getValue(MACD_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 26);
 }
 
 double accelerationOscillator(std::vector<std::vector<double> >& slicedData,
@@ -456,8 +472,10 @@ double chaikinvolatility(std::vector<std::vector<double> >& slicedData,
 	std::vector<double>& temp,
 	size_t curr_index)
 {
-	return exponentialMovingAverage(slicedData, temp, curr_index, ADL_CLOSING_INDEX, CLOSE_INDEX, 3) -
-		exponentialMovingAverage(slicedData, temp, curr_index, ADL_CLOSING_INDEX, CLOSE_INDEX, 10);
+	return exponentialMovingAverage(slicedData, temp, curr_index, 
+		atoi(CConfig::getInstance()->getValue(ADL_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 3) -
+		exponentialMovingAverage(slicedData, temp, curr_index, 
+			atoi(CConfig::getInstance()->getValue(ADL_CLOSING_INDEX).c_str()), CConfig::getInstance()->getCloseIndex(), 10);
 }
 
 
@@ -467,19 +485,19 @@ double fastStochasticPercentK(std::vector<std::vector<double> >& slicedData,
 	int time_period)
 {
 	// (Current Close - Lowest Low)/(Highest High - Lowest Low) * 100
-	double hh = max(slicedData, HIGH_INDEX, (curr_index - 1) - (time_period - 2), curr_index - 1);
-	if (temp[HIGH_INDEX] > hh)
+	double hh = max(slicedData, CConfig::getInstance()->getHighIndex(), (curr_index - 1) - (time_period - 2), curr_index - 1);
+	if (temp[CConfig::getInstance()->getHighIndex()] > hh)
 	{
-		hh = temp[HIGH_INDEX];
+		hh = temp[CConfig::getInstance()->getHighIndex()];
 	}
 	
-	double ll = min(slicedData, LOW_INDEX, (curr_index - 1) - (time_period - 2), curr_index - 1);
-	if (temp[LOW_INDEX] < ll)
+	double ll = min(slicedData, CConfig::getInstance()->getLowIndex(), (curr_index - 1) - (time_period - 2), curr_index - 1);
+	if (temp[CConfig::getInstance()->getLowIndex()] < ll)
 	{
-		ll = temp[LOW_INDEX];
+		ll = temp[CConfig::getInstance()->getLowIndex()];
 	}
 
-	return ((temp[CLOSE_INDEX]- ll)/(hh - ll))*100;
+	return ((temp[CConfig::getInstance()->getCloseIndex()]- ll)/(hh - ll))*100;
 }
 
 double fastStochasticPercentD(std::vector<std::vector<double> >& slicedData,
@@ -491,14 +509,14 @@ double fastStochasticPercentD(std::vector<std::vector<double> >& slicedData,
 	double percentD = 0.0;
 
 	// for current period
-	percentD += temp[FAST_STOCHASTIC_PERCENTK];
+	percentD += temp[atoi(CConfig::getInstance()->getValue(FAST_STOCHASTIC_PERCENTK).c_str())];
 
 	// %K for previous 2 day period
 	for (int i = 1; i < 3; i++)
 	{
-		double hh = max(slicedData, HIGH_INDEX, (curr_index - 1 - i) - (time_period - 1 - i), curr_index - 1 - i);
-		double ll = min(slicedData, LOW_INDEX, (curr_index - 1 - i) - (time_period - 1 - i), curr_index - 1 - i);
-		percentD += ((slicedData[curr_index - i][CLOSE_INDEX] - ll) / (hh - ll)) * 100;
+		double hh = max(slicedData, CConfig::getInstance()->getHighIndex(), (curr_index - 1 - i) - (time_period - 1 - i), curr_index - 1 - i);
+		double ll = min(slicedData, CConfig::getInstance()->getLowIndex(), (curr_index - 1 - i) - (time_period - 1 - i), curr_index - 1 - i);
+		percentD += ((slicedData[curr_index - i][CConfig::getInstance()->getCloseIndex()] - ll) / (hh - ll)) * 100;
 	}
 	percentD /= 3;
 
@@ -508,7 +526,7 @@ double fastStochasticPercentD(std::vector<std::vector<double> >& slicedData,
 double slowStochasticPercentK(std::vector<double>& temp)
 {
 	// equals current Fast stochastic %D
-	return temp[FAST_STOCHASTIC_PERCENTD];
+	return temp[atoi(CConfig::getInstance()->getValue(FAST_STOCHASTIC_PERCENTD).c_str())];
 }
 
 double slowStochasticPercentD(std::vector<std::vector<double> >& slicedData,
@@ -537,19 +555,19 @@ double williamsRPercent(std::vector<std::vector<double> >& slicedData,
 	//%R = (Highest High - Close) / (Highest High - Lowest Low) * -100
 	// default is 14 days period
 
-	double hh = max(slicedData, HIGH_INDEX, (curr_index - 1) - (time_period - 2), curr_index - 1);
-	if (temp[HIGH_INDEX] > hh)
+	double hh = max(slicedData, CConfig::getInstance()->getHighIndex(), (curr_index - 1) - (time_period - 2), curr_index - 1);
+	if (temp[CConfig::getInstance()->getHighIndex()] > hh)
 	{
-		hh = temp[HIGH_INDEX];
+		hh = temp[CConfig::getInstance()->getHighIndex()];
 	}
 
-	double ll = min(slicedData, LOW_INDEX, (curr_index - 1) - (time_period - 2), curr_index - 1);
-	if (temp[LOW_INDEX] < ll)
+	double ll = min(slicedData, CConfig::getInstance()->getLowIndex(), (curr_index - 1) - (time_period - 2), curr_index - 1);
+	if (temp[CConfig::getInstance()->getLowIndex()] < ll)
 	{
-		ll = temp[LOW_INDEX];
+		ll = temp[CConfig::getInstance()->getLowIndex()];
 	}
 
-	return ((hh - temp[CLOSE_INDEX]) / (hh - ll)) * (100 * -1);
+	return ((hh - temp[CConfig::getInstance()->getCloseIndex()]) / (hh - ll)) * (100 * -1);
 }
 
 
@@ -577,11 +595,12 @@ void averageGainLoss(std::vector<std::vector<double> >& slicedData,
 	avgGain = avgLoss = 0.0;
 
 	// check for first time
-	if (slicedData[curr_index - 1].size() < RELATIVE_STRENGTH_INDEX)
+	if (slicedData[curr_index - 1].size() < (size_t)atoi(CConfig::getInstance()->getValue(RELATIVE_STRENGTH_INDEX).c_str()))
 	{
 		for (int i = 0; i < time_period; i++)
 		{
-			double diff = slicedData[curr_index - 1 - i][CLOSE_INDEX] - slicedData[curr_index - 1 - (i + 1)][CLOSE_INDEX];
+			double diff = slicedData[curr_index - 1 - i][CConfig::getInstance()->getCloseIndex()] 
+				- slicedData[curr_index - 1 - (i + 1)][CConfig::getInstance()->getCloseIndex()];
 			if (diff > 0)
 			{
 				// gain
@@ -600,7 +619,8 @@ void averageGainLoss(std::vector<std::vector<double> >& slicedData,
 	}
 	else
 	{
-		double diff = slicedData[curr_index - 1][CLOSE_INDEX] - slicedData[curr_index - 2][CLOSE_INDEX];
+		double diff = slicedData[curr_index - 1][CConfig::getInstance()->getCloseIndex()] 
+			- slicedData[curr_index - 2][CConfig::getInstance()->getCloseIndex()];
 		double gain = 0.0;
 		double loss = 0.0;
 		if (diff > 0)
@@ -640,7 +660,8 @@ double bollingerHigherBand(std::vector<std::vector<double> >& slicedData,
 	int time_period)
 {
 	// 20 - day SMA + (20 - day standard deviation of price x 2)
-	return temp[BOLLINGER_MIDDLE_BAND_INDEX] + (stdDeviation(slicedData, temp, curr_index, col_index, time_period) * 2);
+	return temp[atoi(CConfig::getInstance()->getValue(BOLLINGER_MIDDLE_BAND_INDEX).c_str())] 
+		+ (stdDeviation(slicedData, temp, curr_index, col_index, time_period) * 2);
 }
 
 double bollingerLowerBand(std::vector<std::vector<double> >& slicedData,
@@ -650,7 +671,8 @@ double bollingerLowerBand(std::vector<std::vector<double> >& slicedData,
 	int time_period)
 {
 	// 20 - day SMA - (20 - day standard deviation of price x 2)
-	return temp[BOLLINGER_MIDDLE_BAND_INDEX] - (stdDeviation(slicedData, temp, curr_index, col_index, time_period) * 2);
+	return temp[atoi(CConfig::getInstance()->getValue(BOLLINGER_MIDDLE_BAND_INDEX).c_str())] 
+		- (stdDeviation(slicedData, temp, curr_index, col_index, time_period) * 2);
 }
 
 double stdDeviation(std::vector<std::vector<double> >& slicedData,
