@@ -13,6 +13,8 @@ private:
 	u_int	m_hiddenNodes;		// number of hidden layer nodes
 	u_int	m_outputNodes;		// number of output layer nodes
 	double	m_learningRate;		// learning rate
+	u_int m_trainingSize;		// training%, test% will be 100-training%
+
 	double**	m_weight_input_hidden_matrix;		// weight matrix of input-hidden layer, (m_hiddenNodes x m_inputNodes)
 	double**	m_weight_hidden_output_matrix;		// weight matrix of hidden-output layer, (m_outputNodes x m_hiddenNodes)
 	double**	m_inputs_matrix;					// inputs to the network, (m_inputNodes x 1)
@@ -38,7 +40,7 @@ private:
 	bool valid();
 public:
 	CNeuralNetwork();
-	CNeuralNetwork(u_int inputNodes, u_int hiddenNodes, u_int outputNodes, double learningRate);
+	CNeuralNetwork(u_int inputNodes, u_int hiddenNodes, u_int outputNodes, double learningRate, u_int trainingSize);
 	~CNeuralNetwork();
 
 	u_int getInputNodes();
@@ -62,3 +64,5 @@ public:
 
 };
 #endif
+
+

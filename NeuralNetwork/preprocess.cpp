@@ -36,7 +36,7 @@ void readFile(std::vector<std::string>& lineBuffer)
 	
 	try
 	{
-		CFile cfile(CConfig::getInstance()->getValue(InputFile), OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(InputFile), CF_READ);
 		cfile.skipRows(1);
 		cfile.readFile(lineBuffer);
 		cfile.close();
@@ -51,6 +51,12 @@ void preprocess(void)
 {
 
 	remove(CConfig::getInstance()->getValue(IndicatorsFile).c_str());
+	maxValMap.clear();
+	minValMap.clear();
+	prevAvgGain = 0.0;
+	prevAvgLoss = 0.0;
+	recordCount = 0;
+
 	fillMonthIndex();
 
 	std::vector<std::string> lineBuffer;
@@ -66,7 +72,7 @@ void preprocess(void)
 	//stream out indicators
 	try
 	{
-		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), OpenType::CF_WRITE);
+		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), CF_WRITE);
 		cfile.writeFile(header);
 		std::string str = "\n";
 		cfile.writeFile(str);
@@ -186,6 +192,7 @@ double toNumericDate(std::string& str)
 
 void fillMonthIndex()
 {
+	minValMap.clear();
 	monthIndex.insert(std::pair<std::string, std::string>("Jan", "01"));
 	monthIndex.insert(std::pair<std::string, std::string>("Feb", "02"));
 	monthIndex.insert(std::pair<std::string, std::string>("Mar", "03"));
@@ -727,4 +734,6 @@ double lowestLow(std::vector<std::vector<double> >& slicedData,
 
 	return ll;
 }
+
+
 

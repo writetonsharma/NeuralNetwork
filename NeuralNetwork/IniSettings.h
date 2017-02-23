@@ -13,6 +13,8 @@ static std::string InputFile = "InputFile";
 static std::string IndicatorsFile = "IndicatorsFile";
 static std::string TrainingFile = "TrainingFile";
 static std::string TestFile = "TestFile";
+static std::string TrainingSize = "TrainingSize";
+
 
 // indicators
 static std::string DATE_INDEX = "DATE_INDEX";
@@ -101,3 +103,5 @@ static std::string FIFTYD_MEDIAN_PRICE_INDEX = "FIFTYD_MEDIAN_PRICE_INDEX";
 static std::string TWO_HD_MEDIAN_PRICE_INDEX = "TWO_HD_MEDIAN_PRICE_INDEX";
 
 #endif
+
+

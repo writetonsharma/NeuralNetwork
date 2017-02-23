@@ -1,6 +1,10 @@
 
 #include "CFile.h"
+#ifdef _WIN32
 #include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 CFile::CFile() :
 			m_fs(0),
@@ -30,8 +34,12 @@ CFile::CFile(const std::string& filepath, OpenType type) :
 	}
 	else
 	{
-		std::cout << "File do not exist." << std::endl;
+#ifdef _WIN32
+		std::cout << "File do not exist. " << filepath << "." << std::endl;
 		throw(std::exception("File do not exist.\n"));
+#else
+		std::cout << "File do not exist. " << filepath << "." << std::endl;
+#endif	
 	}
 }
 
@@ -49,8 +57,11 @@ bool CFile::exist(const std::string& filePath)
 	{
 		return true;
 	}
-
+#ifdef _WIN32
 	if(!_access(filePath.c_str(), m_openType))
+#else
+	if (!access(filePath.c_str(), m_openType))
+#endif
 	{
 		return true;
 	}
@@ -66,10 +77,18 @@ void CFile::openFile()
 
 	setMode();
 	m_fs = new std::fstream();
+#ifdef _WIN32
 	m_fs->open(m_filePath.c_str(), m_mode);
+#else
+	m_fs->open(m_filePath.c_str(), (std::_Ios_Openmode)m_mode);
+#endif
 	if(!m_fs->good())
 	{
+#ifdef _WIN32
 		throw(std::exception("File open failed.\n"));
+#else
+		return;
+#endif
 	}
 
 	m_fileOpen = true;
@@ -90,7 +109,11 @@ void CFile::readFile(std::vector<std::string>& lineBuffer)
 {
 	if(!m_fileOpen)
 	{
+#ifdef _WIN32
 		throw(std::exception("Open file first.\n"));
+#else
+		return;
+#endif
 	}
 
 	while(!m_fs->eof())
@@ -125,7 +148,11 @@ void CFile::writeFile(std::vector<std::vector<double> >& indicators)
 {
 	if (!m_fileOpen)
 	{
+#ifdef _WIN32
 		throw(std::exception("Open file first.\n"));
+#else
+		return;
+#endif
 	}
 
 	for (size_t i = 0; i < indicators.size(); i++)
@@ -148,7 +175,11 @@ void CFile::writeFile(std::string& str)
 {
 	if (!m_fileOpen)
 	{
+#ifdef _WIN32
 		throw(std::exception("Open file first.\n"));
+#else
+		return;
+#endif
 	}
 	*m_fs << str.c_str();
 	return;
@@ -193,7 +224,11 @@ void CFile::skipRows(u_int count)
 {
 	if (!m_fileOpen)
 	{
+#ifdef _WIN32
 		throw(std::exception("Open file first.\n"));
+#else
+		return;
+#endif
 	}
 
 	u_int index = 0;
@@ -205,3 +240,5 @@ void CFile::skipRows(u_int count)
 			break;
 	}
 }
+
+

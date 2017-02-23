@@ -11,7 +11,7 @@ double** CMatrix::allocateMatrix(u_int row, u_int col)
 	for(u_int i = 0;i < row;i++)
 	{
 		matrix[i] = new double [col];
-		memset(matrix[i], 0, sizeof(double) * col);
+		memset(matrix[i], 0, sizeof(double*) * col);
 	}
 	return matrix;
 }
@@ -92,7 +92,7 @@ void CMatrix::print(std::string name, std::string fileName, bool printToFile)
 		os = new std::ostream(&fb);
 	}
 
-	*os << name << std::endl;
+	*os << name;
 
 	fb.close();
 	delete os;
@@ -299,3 +299,5 @@ void CMatrix::copy(double** m1, u_int m1_r, u_int m1_c,
 	}
 	return;
 }
+
+

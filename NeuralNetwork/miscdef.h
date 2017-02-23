@@ -18,7 +18,3 @@ typedef unsigned int u_int;
 #define COL_DIFF_SMA_EMA	6
 
 
-
-
-
-

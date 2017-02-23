@@ -29,7 +29,7 @@ CConfig* CConfig::getInstance()
 CConfig::CConfig(const std::string& filePath)
 {
 	m_filePath = filePath;
-	m_cfile = new CFile(filePath, OpenType::CF_READ);
+	m_cfile = new CFile(filePath, CF_READ);
 
 	readConfig();
 
@@ -94,6 +94,11 @@ std::string CConfig::getValue(const std::string& setting)
 	return m_settingsPair[setting];
 }
 
+void CConfig::setValue(const std::string& setting, const std::string& value)
+{
+	m_settingsPair[setting] = value;
+}
+
 size_t CConfig::getLowIndex()
 {
 	return m_lowIndex;
@@ -108,3 +113,5 @@ size_t CConfig::getCloseIndex()
 {
 	return m_closeIndex;
 }
+
+

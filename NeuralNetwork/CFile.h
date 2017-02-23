@@ -4,12 +4,21 @@
 
 #include "miscdef.h"
 
+#ifdef _WIN32
 enum OpenType
 {
 	CF_READ = 04,
 	CF_WRITE = 02,
 	CF_READ_WRITE = 06
 };
+#else
+enum OpenType
+{
+	CF_READ = 02,
+	CF_WRITE = 04,
+	CF_READ_WRITE = 06
+};
+#endif
 
 
 class CFile
@@ -50,3 +59,5 @@ public:
 };
 
 #endif
+
+

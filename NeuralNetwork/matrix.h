@@ -344,3 +344,5 @@ matrix<T> matrix<T>::leftdiv( const matrix<T>& D ) const
 // ...
 
 #endif		/*	__MATRIX_H__	*/
+
+

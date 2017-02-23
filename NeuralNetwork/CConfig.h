@@ -37,9 +37,11 @@ public:
 	static CConfig* getInstance(const std::string& filePath);
 	static CConfig* getInstance();
 	std::string getValue(const std::string& setting);
+	void setValue(const std::string& setting, const std::string& value);
 	size_t getLowIndex();
 	size_t getHighIndex();
 	size_t getCloseIndex();
 };
 #endif		/*	__CCONFIG_H__	*/
+
 

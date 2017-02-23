@@ -18,7 +18,7 @@ bool partition(double trainPercent)
 	std::vector<std::string> lineBuffer;
 	try
 	{
-		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), OpenType::CF_READ);
+		CFile cfile(CConfig::getInstance()->getValue(IndicatorsFile), CF_READ);
 		cfile.skipRows(1);
 		cfile.readFile(lineBuffer);
 		cfile.close();
@@ -54,7 +54,7 @@ bool writeData(std::vector<std::string> lineBuffer, std::string file, size_t lin
 {
 	try
 	{
-		CFile cfile(file.c_str(), OpenType::CF_WRITE);
+		CFile cfile(file.c_str(), CF_WRITE);
 		for (size_t i = lineFrom; i < lineTo; i++)
 		{
 			cfile.writeFile(lineBuffer[i]);
@@ -69,4 +69,5 @@ bool writeData(std::vector<std::string> lineBuffer, std::string file, size_t lin
 	}
 	return true;
 }
+
 

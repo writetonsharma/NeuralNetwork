@@ -17,21 +17,24 @@ CNeuralNetwork::CNeuralNetwork() :
 	std::cout << "NN initialized to zero." << std::endl;
 }
 
-CNeuralNetwork::CNeuralNetwork(u_int inputNodes, u_int hiddenNodes, u_int outputNodes, double learningRate) :
+CNeuralNetwork::CNeuralNetwork(u_int inputNodes, u_int hiddenNodes, 
+	u_int outputNodes, double learningRate, u_int trainingSize) :
 	m_inputNodes(inputNodes),
 	m_hiddenNodes(hiddenNodes),
 	m_outputNodes(outputNodes),
 	m_learningRate(learningRate),
+	m_trainingSize(trainingSize),
 	m_weight_hidden_output_matrix(0),
 	m_weight_input_hidden_matrix(0),
 	m_inputs_matrix(0)
 {
-	std::stringstream strstr;
-	strstr << "Input nodes: " << m_inputNodes << std::endl
-		<< "Hidden nodes: " << m_hiddenNodes << std::endl
-		<< "Output nodes: " << m_outputNodes << std::endl
-		<< "Learning rate: " << m_learningRate << std::endl;
-	CMatrix::print(strstr.str());
+// 	std::stringstream strstr;
+// 	strstr << "Input nodes: " << m_inputNodes << std::endl
+// 		<< "Hidden nodes: " << m_hiddenNodes << std::endl
+// 		<< "Output nodes: " << m_outputNodes << std::endl
+// 		<< "Learning rate: " << m_learningRate << std::endl
+// 		<< "Training size: " << m_trainingSize << std::endl;
+// 	CMatrix::print(strstr.str());
 
 	if (m_inputNodes > m_hiddenNodes)
 	{
@@ -359,3 +362,5 @@ void CNeuralNetwork::activationFunction(double** matrix, u_int row, u_int col)
 		}
 	}
 }
+
+
