@@ -60,6 +60,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.richIndicatorsType = new System.Windows.Forms.RichTextBox();
             this.btnBack = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabBasic.SuspendLayout();
             this.grpPaths.SuspendLayout();
@@ -240,6 +241,7 @@
             this.chkRunCombinations.TabIndex = 10;
             this.chkRunCombinations.Text = "Run auto combinations";
             this.chkRunCombinations.UseVisualStyleBackColor = true;
+            this.chkRunCombinations.CheckedChanged += new System.EventHandler(this.chkRunCombinations_CheckedChanged);
             // 
             // numTDS
             // 
@@ -424,7 +426,7 @@
             this.tabIndicators.Location = new System.Drawing.Point(4, 22);
             this.tabIndicators.Name = "tabIndicators";
             this.tabIndicators.Padding = new System.Windows.Forms.Padding(3);
-            this.tabIndicators.Size = new System.Drawing.Size(496, 308);
+            this.tabIndicators.Size = new System.Drawing.Size(496, 292);
             this.tabIndicators.TabIndex = 1;
             this.tabIndicators.Text = "Indicators";
             this.tabIndicators.UseVisualStyleBackColor = true;
@@ -475,11 +477,22 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
+            // btnRun
+            // 
+            this.btnRun.Location = new System.Drawing.Point(414, 324);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(75, 23);
+            this.btnRun.TabIndex = 2;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
             // ConfigEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(519, 359);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -540,5 +553,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox richIndicatorsType;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnRun;
     }
 }
