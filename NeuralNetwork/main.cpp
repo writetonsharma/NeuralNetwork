@@ -226,10 +226,10 @@ double ANN()
 		}
 	}
 
-// 	std::stringstream str;
+ 	std::stringstream str;
  	double success = (double)(((double)success_count / (double)size) * 100);
-// 	str << "Success%: " << success << "%.\n";
-// 	CMatrix::print(str.str());
+ 	str << "Success%: " << success << "%.\n";
+ 	CMatrix::print(str.str(), CConfig::getInstance()->getValue(LogFile));
  	std::cout << "Success%: " << success << "%.\n";
 
 	CMatrix::freeMatrix(inputMatrix, slicedData[0].size() - 1, 1);
@@ -287,12 +287,12 @@ int main(int argc, char** argv)
 	{		
 		for (double j = 1; j <= 100; j += 5)
 		{			
-// 			for (double k = 50; k <= 90; k += 5)
-// 			{
+ 			for (double k = 50; k <= 90; k += 5)
+ 			{
 				data.push_back(i);
 				data.push_back(j);
-				//data.push_back(k);
-//			}
+				data.push_back(k);
+			}
 		}		
 	}
 // 	data.push_back(1);
@@ -311,39 +311,39 @@ int main(int argc, char** argv)
 
 	//delete [] temp;
 	//data.clear();
-	remove("neuralnetwork.log");
+	remove(CConfig::getInstance()->getValue(LogFile).c_str());
 	double max_success = 0.0;
 	double curr_LR = 0.0;
 	for (int i = 0; i < data.size();)
 	{
-		if (curr_LR != data[i])
-		{
-			std::stringstream str;
-			str << "\n" << data[i] << ",";
-			CMatrix::print(str.str());
-			curr_LR = data[i];
-		}
-		else
-		{
-			std::stringstream str;
-			str << ",";
-			CMatrix::print(str.str());
-		}
+// 		if (curr_LR != data[i])
+// 		{
+// 			std::stringstream str;
+// 			str << "\n" << data[i] << ",";
+// 			CMatrix::print(str.str());
+// 			curr_LR = data[i];
+// 		}
+// 		else
+// 		{
+// 			std::stringstream str;
+// 			str << ",";
+// 			CMatrix::print(str.str());
+// 		}
 		char arr[16];
 		sprintf(arr, "%f", data[i++]);
 		CConfig::getInstance()->setValue("LearningRate", arr);
 		sprintf(arr, "%.0f", data[i++]);
 		CConfig::getInstance()->setValue("HiddenLayerNodeCount", arr);
-		//sprintf(arr, "%.0f", data[i++]);
-		//CConfig::getInstance()->setValue("TrainingSize", arr);
+		sprintf(arr, "%.0f", data[i++]);
+		CConfig::getInstance()->setValue("TrainingSize", arr);
 
 		preprocess();
 		partition(atoi(CConfig::getInstance()->getValue(TrainingSize).c_str()));
 
 		double success = ANN();
-		std::stringstream str;
-		str << success;
-		CMatrix::print(str.str());
+// 		std::stringstream str;
+// 		str << success;
+// 		CMatrix::print(str.str());
 
 		if (success > max_success)
 		{
@@ -353,7 +353,7 @@ int main(int argc, char** argv)
 
 	std::stringstream str;
 	str << "Max Success Rate: " << max_success << "%.\n";
-	//CMatrix::print(str.str());
+	CMatrix::print(str.str(), CConfig::getInstance()->getValue(LogFile));
 	std::cout << str.str() << std::endl;
 
 	return true;

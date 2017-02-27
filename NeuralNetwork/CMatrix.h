@@ -42,7 +42,7 @@ public:
 	static void fillMatrixWithValue(double** matrix, u_int row, u_int col, u_int value);
 	static void printMatrix(double** matrix, std::string name, u_int row, u_int col,
 								std::string fileName, bool printToFile = true);
-	static void print(std::string name, std::string fileName = "neuralnetwork.log", bool printToFile = true);
+	static void print(std::string name, std::string fileName, bool printToFile = true);
 
 	static double** allocateMatrix(u_int row, u_int col);
 	static void freeMatrix(double** matrix, u_int row, u_int col);

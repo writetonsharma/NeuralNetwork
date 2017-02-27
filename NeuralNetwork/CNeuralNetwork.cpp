@@ -2,7 +2,8 @@
 #include "CNeuralNetwork.h"
 #include "CMatrix.h"
 #include "miscdef.h"
-
+#include "CConfig.h"
+#include "IniSettings.h"
 
 
 CNeuralNetwork::CNeuralNetwork() :
@@ -28,13 +29,13 @@ CNeuralNetwork::CNeuralNetwork(u_int inputNodes, u_int hiddenNodes,
 	m_weight_input_hidden_matrix(0),
 	m_inputs_matrix(0)
 {
-// 	std::stringstream strstr;
-// 	strstr << "Input nodes: " << m_inputNodes << std::endl
-// 		<< "Hidden nodes: " << m_hiddenNodes << std::endl
-// 		<< "Output nodes: " << m_outputNodes << std::endl
-// 		<< "Learning rate: " << m_learningRate << std::endl
-// 		<< "Training size: " << m_trainingSize << std::endl;
-// 	CMatrix::print(strstr.str());
+	std::stringstream strstr;
+	strstr << "Input nodes: " << m_inputNodes << std::endl
+		<< "Hidden nodes: " << m_hiddenNodes << std::endl
+		<< "Output nodes: " << m_outputNodes << std::endl
+		<< "Learning rate: " << m_learningRate << std::endl
+		<< "Training size: " << m_trainingSize << std::endl;
+	CMatrix::print(strstr.str(), CConfig::getInstance()->getValue(LogFile));
 
 	if (m_inputNodes > m_hiddenNodes)
 	{

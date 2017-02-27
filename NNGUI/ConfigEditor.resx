@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="richIndicatorsType.Text" xml:space="preserve">
+    <value>DATE_INDEX=0
+OPEN_INDEX=1
+HIGH_INDEX=2
+LOW_INDEX=3
+CLOSE_INDEX=4
+VOL_INDEX=5
+
+TCP_MINUS_PCP_INDEX=6
+PCP_INDEX=7
+PHP_INDEX=8
+PLP_INDEX=9
+POP_INDEX=10
+
+FIVE_DAY_SMA_CLOSING_INDEX=11
+SIX_DAY_SMA_CLOSING_INDEX=12
+TEN_DAY_SMA_CLOSING_INDEX=13
+TWENTY_DAY_SMA_CLOSING_INDEX=14
+FIFTY_DAY_SMA_CLOSING_INDEX=15
+TWO_H_DAY_SMA_CLOSING_INDEX=16
+
+FIVE_DAY_EMA_CLOSING_INDEX=17
+SIX_DAY_EMA_CLOSING_INDEX=18
+TEN_DAY_EMA_CLOSING_INDEX=19
+TWENTY_DAY_EMA_CLOSING_INDEX=20
+FIFTY_DAY_EMA_CLOSING_INDEX=21
+TWO_H_DAY_EMA_CLOSING_INDEX=22
+
+FIVE_DAY_TMA_CLOSING_INDEX=23
+SIX_DAY_TMA_CLOSING_INDEX=24
+TEN_DAY_TMA_CLOSING_INDEX=25
+TWENTY_DAY_TMA_CLOSING_INDEX=26
+FIFTY_DAY_TMA_CLOSING_INDEX=27
+TWO_H_DAY_TMA_CLOSING_INDEX=28
+
+ADL_CLOSING_INDEX=29
+MACD_CLOSING_INDEX=30
+
+FIVE_DAY_ACC_CLOSING_INDEX=31
+SIX_DAY_ACC_CLOSING_INDEX=32
+TEN_DAY_ACC_CLOSING_INDEX=33
+TWENTY_DAY_ACC_CLOSING_INDEX=34
+FIFTY_DAY_ACC_CLOSING_INDEX=35
+FTWO_H_DAY_ACC_CLOSING_INDEX=36
+
+FIVE_DAY_MOM_CLOSING_INDEX=37
+SIX_DAY_MOM_CLOSING_INDEX=38
+TEN_DAY_MOM_CLOSING_INDEX=39
+TWENTY_DAY_MOM_CLOSING_INDEX=40
+FIFTY_DAY_MOM_CLOSING_INDEX=41
+TWO_H_DAY_MOM_CLOSING_INDEX=42
+
+CHAIKIN_VOLATILITY_INDEX=43
+
+FAST_STOCHASTIC_PERCENTK=44
+FAST_STOCHASTIC_PERCENTD=45
+SLOW_STOCHASTIC_PERCENTK=46
+SLOW_STOCHASTIC_PERCENTD=47
+
+WILLIAMS_PERCENT_R_INDEX=48
+RELATIVE_STRENGTH_INDEX=49
+BOLLINGER_MIDDLE_BAND_INDEX=50
+BOLLINGER_HIGHER_BAND_INDEX=51
+BOLLINGER_LOWER_BAND_INDEX=52
+
+FIVED_HIGHEST_HIGH_INDEX=53
+SIXD_HIGHEST_HIGH_INDEX=54
+TEND_HIGHEST_HIGH_INDEX=55
+TWENTYD_HIGHEST_HIGH_INDEX=56
+FIFTYD_HIGHEST_HIGH_INDEX=57
+TWO_HD_HIGHEST_HIGH_INDEX=58
+
+FIVED_LOWEST_LOW_INDEX=59
+SIXD_LOWEST_LOW_INDEX=60
+TEND_LOWEST_LOW_INDEX=61
+TWENTYD_LOWEST_LOW_INDEX=62
+FIFTYD_LOWEST_LOW_INDEX=63
+TWO_HD_LOWEST_LOW_INDEX=64</value>
+  </data>
+</root>
