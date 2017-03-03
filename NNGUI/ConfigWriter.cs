@@ -46,6 +46,22 @@ namespace NNGUI
             {
                 m_StreamWriter.WriteLine(Constants.RunCombinations + "=false");
             }
+            if(m_LoggingLevel == ConfigBase.EnumLoggingLevel.Errors)
+            {
+                m_StreamWriter.WriteLine(Constants.LoggingLevel + "=" + Constants.ErrorLevel);
+            }
+            else if(m_LoggingLevel == ConfigBase.EnumLoggingLevel.Warning)
+            {
+                m_StreamWriter.WriteLine(Constants.LoggingLevel + "=" + Constants.WarningLevel);
+            }
+            else if(m_LoggingLevel == ConfigBase.EnumLoggingLevel.Info)
+            {
+                m_StreamWriter.WriteLine(Constants.LoggingLevel + "=" + Constants.InfoLevel);
+            }
+            else if(m_LoggingLevel == ConfigBase.EnumLoggingLevel.Debug)
+            {
+                m_StreamWriter.WriteLine(Constants.LoggingLevel + "=" + Constants.DebugLevel);
+            }
             m_StreamWriter.WriteLine(Constants.IndicatorsOut + "=" + m_Indicatorsout);
             m_StreamWriter.WriteLine(m_IndicatorsInfo);
 

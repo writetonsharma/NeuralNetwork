@@ -4,6 +4,7 @@
 #include "miscdef.h"
 #include "CConfig.h"
 #include "IniSettings.h"
+#include "CLogging.h"
 
 
 CNeuralNetwork::CNeuralNetwork() :
@@ -35,7 +36,7 @@ CNeuralNetwork::CNeuralNetwork(u_int inputNodes, u_int hiddenNodes,
 		<< "Output nodes: " << m_outputNodes << std::endl
 		<< "Learning rate: " << m_learningRate << std::endl
 		<< "Training size: " << m_trainingSize << std::endl;
-	CMatrix::print(strstr.str(), CConfig::getInstance()->getValue(LogFile));
+	CLogger::getInstance()->print(strstr.str(), CConfig::getInstance()->getValue(LogFile), true, LL_Info);
 
 	if (m_inputNodes > m_hiddenNodes)
 	{

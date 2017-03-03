@@ -20,6 +20,11 @@ namespace NNGUI
         public static string TrainingSize { get { return "TrainingSize"; } }
         public static string RunCombinations { get { return "RunCombinations"; } }
         public static string IndicatorsOut { get { return "IndicatorsOut"; } }
+        public static string LoggingLevel { get { return "LoggingLevel"; } }
+        public static string ErrorLevel { get { return "Errors"; } }
+        public static string WarningLevel { get { return "Warning"; } }
+        public static string InfoLevel { get { return "Info"; } }
+        public static string DebugLevel { get { return "Debug"; } }
 
     }
 }

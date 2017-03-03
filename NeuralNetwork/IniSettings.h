@@ -15,6 +15,7 @@ static std::string TrainingFile = "TrainingFile";
 static std::string TestFile = "TestFile";
 static std::string TrainingSize = "TrainingSize";
 static std::string LogFile = "LogFile";
+static std::string LoggingLevel = "LoggingLevel";
 
 
 // indicators

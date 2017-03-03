@@ -128,6 +128,25 @@ namespace NNGUI
                 m_Indicatorsout = value;
                 m_valid = true;
             }
+            else if(config == Constants.LoggingLevel)
+            {
+                if(value.ToLower() == "errors")
+                {
+                    m_LoggingLevel = ConfigBase.EnumLoggingLevel.Errors;
+                }
+                else if(value.ToLower() == "warning")
+                {
+                    m_LoggingLevel = ConfigBase.EnumLoggingLevel.Warning;
+                }
+                else if(value.ToLower() == "info")
+                {
+                    m_LoggingLevel = ConfigBase.EnumLoggingLevel.Info;
+                }
+                else if(value.ToLower() == "debug")
+                {
+                    m_LoggingLevel = ConfigBase.EnumLoggingLevel.Debug;
+                }
+            }
         }
     }
 }

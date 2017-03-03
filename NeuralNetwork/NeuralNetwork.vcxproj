@@ -14,16 +14,17 @@
     <ProjectGuid>{95244A38-AFA1-47A6-A585-F4A440A58947}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>NeuralNetwork</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -41,6 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>../Dll/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -51,12 +53,19 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../eigen</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>../Dll/NeuralNetwork.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>../Dll/NeuralNetwork.dll</OutputFile>
+      <ProgramDatabaseFile>../Dll/NeuralNetwork.pdb</ProgramDatabaseFile>
+      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+      <ImportLibrary>../Dll/NeuralNetwork.lib</ImportLibrary>
+      <ProfileGuidedDatabase>../Dll/NeuralNetwork.pgd</ProfileGuidedDatabase>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,15 +83,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>../Dll/$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="algo.cpp" />
     <ClCompile Include="CConfig.cpp" />
     <ClCompile Include="CFile.cpp" />
+    <ClCompile Include="CLogging.cpp" />
     <ClCompile Include="CMatrix.cpp" />
     <ClCompile Include="CNeuralNetwork.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="partition.cpp" />
     <ClCompile Include="preprocess.cpp" />
   </ItemGroup>
@@ -90,9 +101,11 @@
     <ClInclude Include="algo.h" />
     <ClInclude Include="CConfig.h" />
     <ClInclude Include="CFile.h" />
+    <ClInclude Include="CLogging.h" />
     <ClInclude Include="CMatrix.h" />
     <ClInclude Include="CNeuralNetwork.h" />
     <ClInclude Include="IniSettings.h" />
+    <ClInclude Include="dllmain.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="miscdef.h" />
     <ClInclude Include="partition.h" />

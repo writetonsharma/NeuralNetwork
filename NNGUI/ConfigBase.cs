@@ -8,6 +8,7 @@ namespace NNGUI
 {
     abstract class ConfigBase
     {
+        public enum EnumLoggingLevel { Errors, Warning, Info, Debug};
         // Data ---
         protected string      m_ConfigFile;
         protected uint        m_OutputLayerNodeCount;
@@ -22,6 +23,7 @@ namespace NNGUI
         protected uint        m_TrainingSize;
         protected bool        m_RunCombinations;
         protected string      m_Indicatorsout;
+        protected EnumLoggingLevel m_LoggingLevel;
 
         protected bool        m_valid;
 
@@ -32,6 +34,19 @@ namespace NNGUI
         {
             m_ConfigFile = configFile;
             m_valid = false;
+            m_OutputLayerNodeCount = 2;
+            m_HiddenLayerNodeCount = 2;
+            m_LearningRate = 0.1;
+            m_PreviousDays = 200;
+            m_InputFilePath = "./InputFile.csv";
+            m_IndicatorsFilePath = "./IndicatorsFile.csv";
+            m_TrainingFilePath = "./TrainingFile.csv";
+            m_TestFilePath = "./TestFile.csv";
+            m_LogFilePath = "./LogFile.log";
+            m_TrainingSize = 80;
+            m_RunCombinations = false;
+            m_Indicatorsout = "0:64";
+            m_LoggingLevel = EnumLoggingLevel.Warning;
         }
 
         public string ConfigFile
@@ -188,6 +203,17 @@ namespace NNGUI
             set
             {
                 m_IndicatorsInfo = value;
+            }
+        }
+        public EnumLoggingLevel LoggingLevel
+        {
+            get
+            {
+                return m_LoggingLevel;
+            }
+            set
+            {
+                m_LoggingLevel = value;
             }
         }
         public bool isValid()

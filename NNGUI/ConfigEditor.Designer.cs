@@ -59,6 +59,9 @@
             this.txtIndicatorsSelection = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.richIndicatorsType = new System.Windows.Forms.RichTextBox();
+            this.tabOthers = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboLogging = new System.Windows.Forms.ComboBox();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
@@ -73,12 +76,14 @@
             this.tabIndicators.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabOthers.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabBasic);
             this.tabControl1.Controls.Add(this.tabIndicators);
+            this.tabControl1.Controls.Add(this.tabOthers);
             this.tabControl1.Location = new System.Drawing.Point(13, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -95,7 +100,7 @@
             this.tabBasic.Padding = new System.Windows.Forms.Padding(3);
             this.tabBasic.Size = new System.Drawing.Size(496, 292);
             this.tabBasic.TabIndex = 0;
-            this.tabBasic.Text = "Basic";
+            this.tabBasic.Text = "Network";
             this.tabBasic.UseVisualStyleBackColor = true;
             // 
             // grpPaths
@@ -467,6 +472,40 @@
             this.richIndicatorsType.TabIndex = 0;
             this.richIndicatorsType.Text = resources.GetString("richIndicatorsType.Text");
             // 
+            // tabOthers
+            // 
+            this.tabOthers.Controls.Add(this.label6);
+            this.tabOthers.Controls.Add(this.comboLogging);
+            this.tabOthers.Location = new System.Drawing.Point(4, 22);
+            this.tabOthers.Name = "tabOthers";
+            this.tabOthers.Size = new System.Drawing.Size(496, 292);
+            this.tabOthers.TabIndex = 2;
+            this.tabOthers.Text = "Others";
+            this.tabOthers.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(13, 20);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(74, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Logging Level";
+            // 
+            // comboLogging
+            // 
+            this.comboLogging.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboLogging.FormattingEnabled = true;
+            this.comboLogging.Items.AddRange(new object[] {
+            "Errors",
+            "Warning",
+            "Info",
+            "Debugging"});
+            this.comboLogging.Location = new System.Drawing.Point(93, 17);
+            this.comboLogging.Name = "comboLogging";
+            this.comboLogging.Size = new System.Drawing.Size(90, 21);
+            this.comboLogging.TabIndex = 0;
+            // 
             // btnBack
             // 
             this.btnBack.Location = new System.Drawing.Point(30, 324);
@@ -515,7 +554,8 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.FormClosing += ConfigEditor_Closing;
+            this.tabOthers.ResumeLayout(false);
+            this.tabOthers.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -554,5 +594,8 @@
         private System.Windows.Forms.RichTextBox richIndicatorsType;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.TabPage tabOthers;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboLogging;
     }
 }

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+
 
 namespace NNGUI
 {
@@ -18,7 +20,11 @@ namespace NNGUI
         private ConfigBase m_ConfigReader;
         private ConfigBase m_ConfigWriter;
 
-
+        [DllImport(@"D:\personal\Code\NeuralNetwork\Dll\NeuralNetwork.dll", 
+            CallingConvention = CallingConvention.Cdecl,
+            ExactSpelling = false,
+            EntryPoint = "ProcessNeuralNetwork")]
+        public static extern int ProcessNeuralNetwork(string configFile);
 
         public ConfigEditor()
         {
@@ -47,6 +53,7 @@ namespace NNGUI
         private void ConfigEditor_Load(object sender, EventArgs e)
         {
             setToolTips();
+            this.FormClosing += ConfigEditor_Closing;
             m_ConfigReader = new ConfigReader(m_configPath);
 
             try
@@ -163,6 +170,9 @@ namespace NNGUI
             m_ConfigWriter.IndicatorsInfo = richIndicatorsType.Text;
 
             m_ConfigWriter.process();
+
+            // call the dll to process neural network
+            ProcessNeuralNetwork(m_configPath);
         }
 
         private void updateForm()
@@ -178,7 +188,7 @@ namespace NNGUI
             txtTrainingsFile.Text = m_ConfigReader.TrainingFilePath;
             txtTestFile.Text = m_ConfigReader.TestFilePath;
             txtLogFile.Text = m_ConfigReader.LogFilePath;
-
+            comboLogging.SelectedIndex = (Int32)m_ConfigReader.LoggingLevel;
             txtIndicatorsSelection.Text = m_ConfigReader.IndicatorsOut;
 
         }

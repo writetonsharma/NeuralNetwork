@@ -4,14 +4,15 @@
 #include "CFile.h"
 #include "CConfig.h"
 #include "IniSettings.h"
-
+#include "CLogging.h"
 
 
 bool partition(double trainPercent)
 {
 	if (trainPercent > 100 && trainPercent < 0)
 	{
-		CMatrix::print("Wrong partition percentage given.\n", CConfig::getInstance()->getValue(LogFile));
+		CLogger::getInstance()->print("Wrong partition percentage given.\n", 
+			CConfig::getInstance()->getValue(LogFile), true, LL_Errors);
 		return false;
 	}
 
@@ -36,14 +37,16 @@ bool partition(double trainPercent)
 	// training data
 	if (!writeData(lineBuffer, CConfig::getInstance()->getValue(TrainingFile), 0, lineCount))
 	{
-		CMatrix::print("Training file creation failed.\n", CConfig::getInstance()->getValue(LogFile));
+		CLogger::getInstance()->print("Training file creation failed.\n",
+			CConfig::getInstance()->getValue(LogFile), true, LL_Errors);
 		return false;
 	}
 
 	// test data
 	if (!writeData(lineBuffer, CConfig::getInstance()->getValue(TestFile), lineCount, lineBuffer.size()))
 	{
-		CMatrix::print("Test file creation failed.\n", CConfig::getInstance()->getValue(LogFile));
+		CLogger::getInstance()->print("Test file creation failed.\n", 
+			CConfig::getInstance()->getValue(LogFile), true, LL_Errors);
 		return false;
 	}
 

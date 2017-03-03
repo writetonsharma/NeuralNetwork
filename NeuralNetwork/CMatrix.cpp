@@ -50,55 +50,6 @@ void CMatrix::fillMatrixWithValue(double** matrix, u_int row, u_int col, u_int v
 }
 
 
-void CMatrix::printMatrix(double** matrix, std::string name, u_int row, u_int col,
-							std::string fileName, bool printToFile)
-{
-	std::ostream* os;
-	std::filebuf fb;
-	if (!printToFile)
-	{
-		os = new std::ostream(std::cout.rdbuf());
-	}
-	else
-	{		
-		fb.open(fileName.c_str(), std::ios::out | std::ios::app);
-		os = new std::ostream(&fb);
-	}
-
-	*os << std::endl << "Printing matrix \'" << name << "\'" << std::endl;
-	for (u_int i = 0; i < row; i++)
-	{
-		for (u_int j = 0; j < col; j++)
-		{
-			*os << matrix[i][j] << "\t";
-		}
-		*os << std::endl;
-	}
-	fb.close();
-	delete os;
-}
-
-void CMatrix::print(std::string name, std::string fileName, bool printToFile)
-{
-	std::ostream* os;
-	std::filebuf fb;
-	if (!printToFile)
-	{
-		os = new std::ostream(std::cout.rdbuf());
-	}
-	else
-	{
-		fb.open(fileName.c_str(), std::ios::out | std::ios::app);
-		os = new std::ostream(&fb);
-	}
-
-	*os << name;
-
-	fb.close();
-	delete os;
-
-}
-
 void CMatrix::dotProduct(double** m1, u_int m1_r, u_int m1_c, 
 				double** m2, u_int m2_r, u_int m2_c, 
 				double** r, u_int& r_r, u_int& r_c, bool allocate)
