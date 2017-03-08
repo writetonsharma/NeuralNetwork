@@ -130,7 +130,8 @@ namespace NNGUI
             }
             else if(config == Constants.LoggingLevel)
             {
-                if(value.ToLower() == "errors")
+                m_LoggingLevelString = value.ToLower();
+                if (value.ToLower() == "errors")
                 {
                     m_LoggingLevel = ConfigBase.EnumLoggingLevel.Errors;
                 }

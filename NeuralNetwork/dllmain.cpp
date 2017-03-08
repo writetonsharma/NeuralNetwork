@@ -13,8 +13,9 @@
 
 extern std::map<int, double>	maxValMap;
 extern std::map<int, double>	minValMap;
+std::vector<double> dataSet;
+size_t g_progress;
 
-//#define INPUT_NODE_COUNT
 
 void scaleData(const std::vector<std::string>& lineBuffer, std::vector<std::vector<double> >& slicedData)
 {
@@ -95,7 +96,6 @@ void max(double** target, u_int r, u_int c, double& m, u_int& row_index)
 
 double ANN()
 {
-	//CNeuralNetwork* ann = new CNeuralNetwork(3, 3, 3, 0.300);
 	std::vector<std::string> lineBuffer;
 	try
 	{
@@ -114,11 +114,10 @@ double ANN()
 	lineBuffer.clear();
 
 
-
+	// row x columns
 	double** targetMatrix = CMatrix::allocateMatrix(atoi(CConfig::getInstance()->getValue(OutputLayerNodeCount).c_str()), 1);
 	double** inputMatrix = CMatrix::allocateMatrix(slicedData[0].size() - 1, 1);
-
-
+	
 
 	CNeuralNetwork* ann = new CNeuralNetwork(slicedData[0].size() - 1, 
 		atoi(CConfig::getInstance()->getValue(HiddenLayerNodeCount).c_str()),
@@ -127,8 +126,7 @@ double ANN()
 		atoi(CConfig::getInstance()->getValue(TrainingSize).c_str()));
 	size_t size = slicedData.size();
 
-
-
+	
 	//CMatrix::print("\n###### Training run ######\n");
 
 	// for all the inputs
@@ -241,49 +239,57 @@ double ANN()
 	return success;
 }
 
-extern "C" __declspec(dllexport) int __cdecl ProcessNeuralNetwork(char* configFile)
+void setCombinations(bool RunCombinations)
 {
+	if (!RunCombinations)
+	{
+		dataSet.push_back(atof(CConfig::getInstance()->getValue("LearningRate").c_str()));
+		dataSet.push_back(atoi(CConfig::getInstance()->getValue("HiddenLayerNodeCount").c_str()));
+		dataSet.push_back(atoi(CConfig::getInstance()->getValue("TrainingSize").c_str()));
+		return;
+	}
 
-	std::string iniFile = configFile;
-	CConfig::getInstance(iniFile);
-	CLogger::getInstance(CConfig::getInstance()->getValue(LoggingLevel));
-
-	// make combinations of settings and run
-
-	//std::vector<std::vector<double> > combinations;
-	std::vector<double> data;
 	for (double i = 0.1; i <= 0.91; i += 0.1)
 	{
 		for (double j = 1; j <= 100; j += 5)
 		{
 			for (double k = 50; k <= 90; k += 5)
 			{
-				data.push_back(i);
-				data.push_back(j);
-				data.push_back(k);
+				dataSet.push_back(i);
+				dataSet.push_back(j);
+				dataSet.push_back(k);
 			}
 		}
 	}
-	// 	data.push_back(1);
-	// 	data.push_back(2);
-	// 	for (double i =5; i <= 10; i += 5)
-	// 	{
-	// 		data.push_back(i);
-	// 	}
-	// 	for (double i = 50; i <= 60; i += 5)
-	// 	{
-	// 		data.push_back(i);
-	// 	}
-	// 	double* temp = new double [data.size()];
+}
 
-	//getCombinations(combinations, data, temp, 0, data.size() - 1, 0, 3);
-
-	//delete [] temp;
-	//data.clear();
+extern "C" __declspec(dllexport) void __cdecl Init(char* configFile)
+{
+	std::string iniFile = configFile;
+	CConfig::getInstance(iniFile);
+	CLogger::getInstance(CConfig::getInstance()->getValue(LoggingLevel));
 	remove(CConfig::getInstance()->getValue(LogFile).c_str());
+
+	setCombinations(CConfig::getInstance()->getRunCombinations());
+}
+
+extern "C" __declspec(dllexport) size_t __cdecl getProgress()
+{
+	return g_progress;
+}
+
+extern "C" __declspec(dllexport) size_t __cdecl getDataSize()
+{
+	return dataSet.size();
+}
+
+extern "C" __declspec(dllexport) int __cdecl ProcessNeuralNetwork()
+{
+	
 	double max_success = 0.0;
 	double curr_LR = 0.0;
-	for (size_t i = 0; i < data.size();)
+	
+	for (g_progress = 0; g_progress < dataSet.size();)
 	{
 		// 		if (curr_LR != data[i])
 		// 		{
@@ -299,11 +305,11 @@ extern "C" __declspec(dllexport) int __cdecl ProcessNeuralNetwork(char* configFi
 		// 			CMatrix::print(str.str());
 		// 		}
 		char arr[16];
-		sprintf(arr, "%f", data[i++]);
+		sprintf(arr, "%f", dataSet[g_progress++]);
 		CConfig::getInstance()->setValue("LearningRate", arr);
-		sprintf(arr, "%.0f", data[i++]);
+		sprintf(arr, "%.0f", dataSet[g_progress++]);
 		CConfig::getInstance()->setValue("HiddenLayerNodeCount", arr);
-		sprintf(arr, "%.0f", data[i++]);
+		sprintf(arr, "%.0f", dataSet[g_progress++]);
 		CConfig::getInstance()->setValue("TrainingSize", arr);
 
 		preprocess();
@@ -328,123 +334,7 @@ extern "C" __declspec(dllexport) int __cdecl ProcessNeuralNetwork(char* configFi
 	return true;
 }
 
-// void getCombinations(std::vector<std::vector<double> >& combinations, 
-// 			std::vector<double> arr, double temp[], int start, int end, int index, int r)
-// {
-// 	// Current combination is ready to be printed, print it
-// 	if (index == r)
-// 	{
-// 		std::vector<double> t;
-// 		for (int j = 0; j < r; j++)
-// 		{
-// 			if (temp[0] >= 1.0)
-// 				break;			
-// 			t.push_back(temp[j]);
-// 		}
-// 		combinations.push_back(t);
-// 		return;
-// 	}
-// 
-// 	// replace index with all possible elements. The condition
-// 	// "end-i+1 >= r-index" makes sure that including one element
-// 	// at index will make a combination with remaining elements
-// 	// at remaining positions
-// 	for (int i = start; i <= end && end - i + 1 >= r - index; i++)
-// 	{
-// 		temp[index] = arr[i];
-// 		getCombinations(combinations, arr, temp, i + 1, end, index + 1, r);
-// 	}
-// }
 
-// int main(int argc, char** argv)
-// {
-// 	if (argc < 2)
-// 	{
-// 		std::cout << "Usage: " << argv[0] << " <ini_file_path>" << std::endl;
-// 		return false;
-// 	}
-// 
-// 	std::string iniFile = argv[1];
-// 	CConfig::getInstance(iniFile);
-// 
-// 	// make combinations of settings and run
-// 
-// 	//std::vector<std::vector<double> > combinations;
-// 	std::vector<double> data;
-// 	for (double i = 0.1; i <= 0.91; i += 0.1)
-// 	{		
-// 		for (double j = 1; j <= 100; j += 5)
-// 		{			
-//  			for (double k = 50; k <= 90; k += 5)
-//  			{
-// 				data.push_back(i);
-// 				data.push_back(j);
-// 				data.push_back(k);
-// 			}
-// 		}		
-// 	}
-// // 	data.push_back(1);
-// // 	data.push_back(2);
-// // 	for (double i =5; i <= 10; i += 5)
-// // 	{
-// // 		data.push_back(i);
-// // 	}
-// // 	for (double i = 50; i <= 60; i += 5)
-// // 	{
-// // 		data.push_back(i);
-// // 	}
-// // 	double* temp = new double [data.size()];
-// 
-// 	//getCombinations(combinations, data, temp, 0, data.size() - 1, 0, 3);
-// 
-// 	//delete [] temp;
-// 	//data.clear();
-// 	remove(CConfig::getInstance()->getValue(LogFile).c_str());
-// 	double max_success = 0.0;
-// 	double curr_LR = 0.0;
-// 	for (int i = 0; i < data.size();)
-// 	{
-// // 		if (curr_LR != data[i])
-// // 		{
-// // 			std::stringstream str;
-// // 			str << "\n" << data[i] << ",";
-// // 			CMatrix::print(str.str());
-// // 			curr_LR = data[i];
-// // 		}
-// // 		else
-// // 		{
-// // 			std::stringstream str;
-// // 			str << ",";
-// // 			CMatrix::print(str.str());
-// // 		}
-// 		char arr[16];
-// 		sprintf(arr, "%f", data[i++]);
-// 		CConfig::getInstance()->setValue("LearningRate", arr);
-// 		sprintf(arr, "%.0f", data[i++]);
-// 		CConfig::getInstance()->setValue("HiddenLayerNodeCount", arr);
-// 		sprintf(arr, "%.0f", data[i++]);
-// 		CConfig::getInstance()->setValue("TrainingSize", arr);
-// 
-// 		preprocess();
-// 		partition(atoi(CConfig::getInstance()->getValue(TrainingSize).c_str()));
-// 
-// 		double success = ANN();
-// // 		std::stringstream str;
-// // 		str << success;
-// // 		CMatrix::print(str.str());
-// 
-// 		if (success > max_success)
-// 		{
-// 			max_success = success;
-// 		}
-// 	}
-// 
-// 	std::stringstream str;
-// 	str << "Max Success Rate: " << max_success << "%.\n";
-// 	CMatrix::print(str.str(), CConfig::getInstance()->getValue(LogFile));
-// 	std::cout << str.str() << std::endl;
-// 
-// 	return true;
-// }
+
 
 

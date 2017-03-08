@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
+
 
 
 namespace NNGUI
@@ -20,11 +20,6 @@ namespace NNGUI
         private ConfigBase m_ConfigReader;
         private ConfigBase m_ConfigWriter;
 
-        [DllImport(@"D:\personal\Code\NeuralNetwork\Dll\NeuralNetwork.dll", 
-            CallingConvention = CallingConvention.Cdecl,
-            ExactSpelling = false,
-            EntryPoint = "ProcessNeuralNetwork")]
-        public static extern int ProcessNeuralNetwork(string configFile);
 
         public ConfigEditor()
         {
@@ -159,7 +154,7 @@ namespace NNGUI
             m_ConfigWriter.TrainingSize = Convert.ToUInt32(numTDS.Value);
             m_ConfigWriter.PreviousDays = Convert.ToUInt32(numPD.Value);
             m_ConfigWriter.RunCombinations = chkRunCombinations.Checked;
-
+            m_ConfigWriter.LoggingLevelString = comboLogging.Text;
             m_ConfigWriter.InputFilePath = txtInputFile.Text;
             m_ConfigWriter.IndicatorsFilePath = txtIndicatorsFile.Text;
             m_ConfigWriter.TrainingFilePath = txtTrainingsFile.Text;
@@ -169,10 +164,14 @@ namespace NNGUI
             m_ConfigWriter.IndicatorsOut = txtIndicatorsSelection.Text;
             m_ConfigWriter.IndicatorsInfo = richIndicatorsType.Text;
 
+
             m_ConfigWriter.process();
 
-            // call the dll to process neural network
-            ProcessNeuralNetwork(m_configPath);
+            //this.m_NNBackgroundWorker.RunWorkerAsync(this);
+            ProgressDialog pd = new ProgressDialog();
+            pd.setConfigurationFilePath(m_configPath);
+            pd.ShowDialog(this);
+
         }
 
         private void updateForm()

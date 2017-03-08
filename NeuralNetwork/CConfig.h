@@ -31,6 +31,7 @@ private:
 	size_t m_lowIndex;
 	size_t m_highIndex;
 	size_t m_closeIndex;
+	bool m_runCombinations;
 
 public:
 
@@ -41,6 +42,11 @@ public:
 	size_t getLowIndex();
 	size_t getHighIndex();
 	size_t getCloseIndex();
+	bool getRunCombinations()
+	{
+		return m_runCombinations;
+	}
+
 };
 #endif		/*	__CCONFIG_H__	*/
 

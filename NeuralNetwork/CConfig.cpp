@@ -36,6 +36,7 @@ CConfig::CConfig(const std::string& filePath)
 	m_closeIndex = atoi(getValue(CLOSE_INDEX).c_str());
 	m_highIndex = atoi(getValue(HIGH_INDEX).c_str());
 	m_lowIndex = atoi(getValue(LOW_INDEX).c_str());
+	m_runCombinations = getValue(RunCombinations) == "true" ? true : false;
 
 }
 

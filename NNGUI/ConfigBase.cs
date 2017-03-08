@@ -24,6 +24,7 @@ namespace NNGUI
         protected bool        m_RunCombinations;
         protected string      m_Indicatorsout;
         protected EnumLoggingLevel m_LoggingLevel;
+        protected string m_LoggingLevelString;
 
         protected bool        m_valid;
 
@@ -47,6 +48,7 @@ namespace NNGUI
             m_RunCombinations = false;
             m_Indicatorsout = "0:64";
             m_LoggingLevel = EnumLoggingLevel.Warning;
+            m_LoggingLevelString = Constants.WarningLevel;
         }
 
         public string ConfigFile
@@ -214,6 +216,17 @@ namespace NNGUI
             set
             {
                 m_LoggingLevel = value;
+            }
+        }
+        public string LoggingLevelString
+        {
+            get
+            {
+                return m_LoggingLevelString;
+            }
+            set
+            {
+                m_LoggingLevelString = value;
             }
         }
         public bool isValid()
