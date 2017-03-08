@@ -8,7 +8,10 @@
     <LocalDebuggerWorkingDirectory>D:\personal\Code\NeuralNetwork\Dll</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>./nnConfig.ini</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>D:\personal\Code\NeuralNetwork\Dll\NNGUI.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>D:\personal\Code\NeuralNetwork\Dll\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

@@ -64,6 +64,7 @@ namespace NNGUI
             this.m_NNBackgroundProgressUpdater.DoWork += new System.ComponentModel.DoWorkEventHandler(this.NNBackgroundProgressUpdater_DoWork);
             this.m_NNBackgroundProgressUpdater.ProgressChanged += new ProgressChangedEventHandler(NNBackgroundProgressUpdater_ProgressChanged);
             this.m_NNBackgroundProgressUpdater.WorkerReportsProgress = true;
+            this.m_NNBackgroundProgressUpdater.WorkerSupportsCancellation = true;
 
         }
 
@@ -85,12 +86,8 @@ namespace NNGUI
 
         private void ProgressDialog_Shown(object sender, EventArgs e)
         {
-            Init(m_configPath);
-            m_dataSize = getDataSize();
-
             this.m_NNBackgroundWorker.RunWorkerAsync(this);
             this.m_NNBackgroundProgressUpdater.RunWorkerAsync(this);
-
         }
 
         private void ProgressDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
